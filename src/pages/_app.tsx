@@ -6,22 +6,50 @@ import superjson from "superjson";
 
 import "../styles/globals.css";
 import { AppRouter } from "../server/route/app.router";
+import { URL } from "../constants";
+import { trpc } from "../utils/trpc";
+import { UserCtxProvider } from "../context/user.context";
+import Navbar from "../components/Navbar";
+import toast, { Toaster } from "react-hot-toast";
 
 function MyApp({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />;
+  const { data, error, isLoading } = trpc.useQuery(["users.me"]);
+
+  if (isLoading) {
+    return <>Loading user...</>;
+  }
+
+  if (error) {
+    toast.error(error.message);
+  }
+
+  return (
+    <UserCtxProvider value={data}>
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          className: "",
+          duration: 4000,
+          success: {
+            style: {
+              padding: "8px",
+            },
+          },
+        }}
+      />
+      <Navbar />
+      <Component {...pageProps} />
+    </UserCtxProvider>
+  );
 }
 
 export default withTRPC<AppRouter>({
   config({ ctx }) {
-    const url = process.env.NEXT_PUBLIC_VERCEL_URL
-      ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}/api/trpc`
-      : "http://localhost:3000/api/trpc";
-
     const links = [
       loggerLink(),
       httpBatchLink({
         maxBatchSize: 10,
-        url,
+        url: URL,
       }),
     ];
 
