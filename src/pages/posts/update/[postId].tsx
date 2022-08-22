@@ -55,7 +55,7 @@ export default function UpdatePage() {
                       <textarea
                         id="body"
                         name="body"
-                        rows={3}
+                        rows={12}
                         className="p-2 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md"
                         placeholder="Text apppears here.."
                         defaultValue={""}
