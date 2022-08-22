@@ -72,7 +72,9 @@ const RegisterPage = () => {
             </div>
 
             <div className="flex items-center">
-              <p className="text-red-500 text-sm font-light">{error && error.message}</p>
+              <p className="text-red-500 text-sm font-light">
+                {error && error.message}
+              </p>
             </div>
 
             <div className="flex items-center justify-between">
