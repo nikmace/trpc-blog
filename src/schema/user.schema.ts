@@ -1,5 +1,19 @@
 import z from "zod";
 
+export interface IUser {
+  _id: string;
+  name: string;
+  email: string;
+  photo: string;
+  role: string;
+  provider?: string;
+  active?: boolean;
+  verified?: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  __v: number;
+  id: string;
+}
 /**
  * User Schema
  */
