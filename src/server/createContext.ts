@@ -7,7 +7,7 @@ interface ContextProps {
   res: NextApiResponse;
 }
 
-interface CtxUser {
+export interface CtxUser {
   id: string;
   email: string;
   name: string;
