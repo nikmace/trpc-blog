@@ -1,25 +1,35 @@
 /* This example requires Tailwind CSS v2.0+ */
-import { Fragment } from "react";
+import { Fragment, useEffect, useMemo } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { BellIcon, MenuIcon, XIcon } from "@heroicons/react/outline";
 import Image from "next/image";
-
-import Logo from "../public/images/talkey3.png";
 import Link from "next/link";
 
-const navigation = [
-  { name: "Dashboard", href: "#", current: true },
-  { name: "Team", href: "#", current: false },
-  { name: "Posts", href: "/posts", current: false },
-  { name: "Login", href: "/login", current: false },
-  { name: "Register", href: "/register", current: false },
-];
+import Logo from "../public/images/talkey3.png";
+import { selectAuthenticated } from "../redux/auth/selectors";
+import { logoutUser } from "../redux/auth/slice";
 
 function classNames(...classes: any[]) {
   return classes.filter(Boolean).join(" ");
 }
 
 export default function Navbar() {
+  const dispatch = useDispatch();
+  const isAuthenticated = useSelector(selectAuthenticated);
+  let navigation = useMemo(
+    () => [
+      { name: "Dashboard", href: "#", current: true },
+      { name: "Team", href: "#", current: false },
+      { name: "Posts", href: "/posts", current: false },
+    ],
+    []
+  );
+
+  const handleLogout = () => {
+    dispatch(logoutUser());
+  };
+
   return (
     <Disclosure as="nav" className="bg-gray-800">
       {({ open }: any) => (
@@ -64,6 +74,36 @@ export default function Navbar() {
                         </p>
                       </Link>
                     ))}
+                    {!isAuthenticated && (
+                      <>
+                        <Link href={"/login"} key={"login"}>
+                          <p
+                            className={classNames(
+                              false
+                                ? "bg-gray-900 text-white"
+                                : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                              "px-3 py-2 rounded-md text-sm font-medium"
+                            )}
+                            aria-current={false ? "page" : undefined}
+                          >
+                            Login
+                          </p>
+                        </Link>
+                        <Link href={"/register"} key={"register"}>
+                          <p
+                            className={classNames(
+                              false
+                                ? "bg-gray-900 text-white"
+                                : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                              "px-3 py-2 rounded-md text-sm font-medium"
+                            )}
+                            aria-current={false ? "page" : undefined}
+                          >
+                            Register
+                          </p>
+                        </Link>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
@@ -102,41 +142,41 @@ export default function Navbar() {
                     <Menu.Items className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
                       <Menu.Item>
                         {({ active }) => (
-                          <Link
-                            href="#"
-                            className={classNames(
-                              active ? "bg-gray-100" : "",
-                              "block px-4 py-2 text-sm text-gray-700"
-                            )}
-                          >
-                            Your Profile
+                          <Link href={"/me"}>
+                            <p
+                              className={classNames(
+                                active ? "bg-gray-100" : "",
+                                "block px-4 py-2 text-sm text-gray-700"
+                              )}
+                            >
+                              Your Profile
+                            </p>
                           </Link>
                         )}
                       </Menu.Item>
                       <Menu.Item>
                         {({ active }) => (
-                          <a
-                            href="#"
+                          <p
                             className={classNames(
                               active ? "bg-gray-100" : "",
                               "block px-4 py-2 text-sm text-gray-700"
                             )}
                           >
                             Settings
-                          </a>
+                          </p>
                         )}
                       </Menu.Item>
                       <Menu.Item>
                         {({ active }) => (
-                          <a
-                            href="#"
+                          <p
+                            onClick={handleLogout}
                             className={classNames(
                               active ? "bg-gray-100" : "",
                               "block px-4 py-2 text-sm text-gray-700"
                             )}
                           >
                             Sign out
-                          </a>
+                          </p>
                         )}
                       </Menu.Item>
                     </Menu.Items>
