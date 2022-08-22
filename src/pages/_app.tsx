@@ -3,28 +3,28 @@ import { withTRPC } from "@trpc/next";
 import { loggerLink } from "@trpc/client/links/loggerLink";
 import { httpBatchLink } from "@trpc/client/links/httpBatchLink";
 import superjson from "superjson";
+import { Provider } from "react-redux";
+import { Toaster } from "react-hot-toast";
 
 import "../styles/globals.css";
 import { AppRouter } from "../server/route/app.router";
 import { URL } from "../constants";
-import { trpc } from "../utils/trpc";
-import { UserCtxProvider } from "../context/user.context";
 import Navbar from "../components/Navbar";
-import toast, { Toaster } from "react-hot-toast";
+import { store } from "../redux/store";
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const { data, error, isLoading } = trpc.useQuery(["users.me"]);
+  // const { data, error, isLoading } = trpc.useQuery(["users.me"]);
 
-  if (isLoading) {
-    return <>Loading user...</>;
-  }
+  // if (isLoading) {
+  //   return <>Loading user...</>;
+  // }
 
-  if (error) {
-    toast.error(error.message);
-  }
+  // if (error) {
+  //   toast.error(error.message);
+  // }
 
   return (
-    <UserCtxProvider value={data}>
+    <Provider store={store}>
       <Toaster
         position="top-right"
         toastOptions={{
@@ -39,7 +39,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       />
       <Navbar />
       <Component {...pageProps} />
-    </UserCtxProvider>
+    </Provider>
   );
 }
 
