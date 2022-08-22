@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "check": "npm run eslint:check && npm run prettier:check && npm run stylelint:check",
+    "check": "npm run eslint:check && npm run prettier:check",
     "prepare": "husky install",
     "precommit": "lint-staged",
     "prettier:check": "prettier --check \"src/**/*.{ts,tsx}\"",
