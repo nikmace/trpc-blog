@@ -1,23 +1,25 @@
+import { useEffect } from "react";
+import { hasCookie } from "cookies-next";
 import type { NextPage } from "next";
-import Head from "next/head";
-import Image from "next/image";
-import Link from "next/link";
-import LoginForm from "../components/LoginForm";
-import Navbar from "../components/Navbar";
-import { useUserCtx } from "../context/user.context";
-import styles from "../styles/Home.module.css";
-import { trpc } from "../utils/trpc";
+import { useDispatch } from "react-redux";
+import { logoutUser } from "../redux/auth/slice";
 
 const Home: NextPage = () => {
-  const user = useUserCtx();
+  const dispatch = useDispatch();
 
-  if (!user) {
-    // return <LoginForm />;
-  }
+  useEffect(() => {
+    const interval = setInterval(() => {
+      /**
+       * Check if the token is expired & logging out the user
+       */
+      if (!hasCookie("token")) {
+        dispatch(logoutUser());
+      }
+    }, 60000);
 
-  return (
-    <div>Main content</div>
-  );
+    return () => clearInterval(interval);
+  }, [dispatch]);
+  return <div>Main content</div>;
 };
 
 export default Home;
