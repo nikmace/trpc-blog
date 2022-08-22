@@ -114,9 +114,19 @@ export const userRouter = createRouter()
         id: token.user.id,
       });
 
-      ctx.res.setHeader("Set-Cookie", serialize("token", jwt, { path: "/" }));
+      const EXPIRES_IN_ONE_HOUR = 60 * 60; // In seconds
+
+      ctx.res.setHeader(
+        "Set-Cookie",
+        serialize("token", jwt, { path: "/", maxAge: EXPIRES_IN_ONE_HOUR })
+      );
 
       return {
+        user: {
+          email: token.user.email,
+          id: token.user.id,
+          name: token.user.name,
+        },
         redirect: token.redirect,
       };
     },
