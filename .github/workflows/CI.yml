@@ -1,6 +1,9 @@
 name: CI
 
-on: push
+on: 
+  push:
+  pull_request:
+    branches: [main]
 
 jobs:
   lint-and-test:
@@ -8,6 +11,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - run: yarn install --frozen-lockfile
-      - run: yarn eslint:check
-      - run: yarn prettier:check
+        with:
+          ref: ${{ github.head_ref }}
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "16.x"
+      - run: yarn
+      - run: npm run eslint:check
+      - run: npm run prettier:check
