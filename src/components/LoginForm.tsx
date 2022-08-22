@@ -3,15 +3,30 @@ import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
+import { getAuthUserFromCookies, setAuth } from "../redux/auth/slice";
 
 import { CreateUserInput } from "../schema/user.schema";
 import { trpc } from "../utils/trpc";
+import Loader from "./Loader";
 
 function VerifyToken({ hash }: { hash: string }) {
+  const dispatch = useDispatch();
   const router = useRouter();
-  const { data, isLoading } = trpc.useQuery(["users.verify-otp", { hash }]);
+  const { data, isLoading, error } = trpc.useQuery([
+    "users.verify-otp",
+    { hash },
+  ]);
+
   if (isLoading) {
-    return <p>Verifying token...</p>;
+    return <Loader />;
+  }
+
+  if (error) toast.error(error.message);
+
+  if (data) {
+    const { id, isAuthenticated, email } = getAuthUserFromCookies();
+    dispatch(setAuth({ id, email, isAuthenticated }));
   }
 
   router.push(data?.redirect.includes("login") ? "/" : data?.redirect || "/");
@@ -28,7 +43,7 @@ const LoginForm = () => {
     onError: (e) => {},
     onSuccess: () => {
       setSuccess(true);
-      toast.success('Check your email to authenticate!')
+      toast.success("Check your email to authenticate!");
     },
   });
 
@@ -37,8 +52,6 @@ const LoginForm = () => {
   };
 
   const hash = router.asPath.split("#token=")[1];
-
-  console.log(`Hash: ${hash}`);
 
   if (hash) {
     return <VerifyToken hash={hash} />;
