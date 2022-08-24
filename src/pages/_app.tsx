@@ -14,16 +14,6 @@ import Navbar from "../components/Navbar";
 import { store } from "../redux/store";
 
 function MyApp({ Component, pageProps }: AppProps) {
-  // const { data, error, isLoading } = trpc.useQuery(["users.me"]);
-
-  // if (isLoading) {
-  //   return <>Loading user...</>;
-  // }
-
-  // if (error) {
-  //   toast.error(error.message);
-  // }
-
   return (
     <Provider store={store}>
       <Toaster
