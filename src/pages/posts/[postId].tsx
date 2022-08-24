@@ -28,7 +28,7 @@ function SinglePostPage() {
         userId={data.userId}
         id={data.id}
       />
-      <div className="">{data.body}</div>
+      <div className="whitespace-pre-wrap">{data.body}</div>
       <Link href="/posts">
         <a
           href="#"
