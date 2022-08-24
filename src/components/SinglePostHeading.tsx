@@ -1,23 +1,22 @@
 /* This example requires Tailwind CSS v2.0+ */
 import { Fragment } from "react";
 import {
-  BriefcaseIcon,
   CalendarIcon,
   CheckIcon,
   ChevronDownIcon,
-  CurrencyDollarIcon,
   LinkIcon,
-  LocationMarkerIcon,
   PencilIcon,
   BookmarkIcon,
-  DesktopComputerIcon,
   PencilAltIcon,
+  TrashIcon,
 } from "@heroicons/react/solid";
 import { Menu, Transition } from "@headlessui/react";
-import { useUserCtx } from "../context/user.context";
 import Link from "next/link";
 import { useSelector } from "react-redux";
 import { selectAuthUser } from "../redux/auth/selectors";
+import { trpc } from "../utils/trpc";
+import toast from "react-hot-toast";
+import { useRouter } from "next/router";
 
 function classNames(...classes: any[]) {
   return classes.filter(Boolean).join(" ");
@@ -36,7 +35,29 @@ export default function SinglePostHeading({
   userId,
   id,
 }: Props) {
+  const router = useRouter();
   const authUser = useSelector(selectAuthUser);
+  const { mutate } = trpc.useMutation(["posts.delete-post"], {
+    onError() {
+      toast.error("Could not delete the post. Try again later!");
+    },
+    onSuccess({ title }) {
+      toast.success(`Post with title "${title}" deleted successfully!`);
+    },
+  });
+
+  const deletePostHandler = async () => {
+    alert(`Are you sure you want to delete the post`);
+    await new Promise((resolve, reject) => {
+      setTimeout(() => {
+        // TODO: Add Dialog to ask wether user wants to delete the post
+        mutate({ postId: id });
+        router.push("/posts");
+        resolve(undefined);
+      }, 1000);
+    });
+    mutate({ postId: id });
+  };
 
   return (
     <div className="lg:flex lg:items-center lg:justify-between my-16">
@@ -72,20 +93,35 @@ export default function SinglePostHeading({
       </div>
       <div className="mt-5 flex lg:mt-0 lg:ml-4">
         {authUser.id === userId && (
-          <span className="hidden sm:block">
-            <Link href={`/posts/update/${id}`}>
+          <>
+            <span className="hidden sm:block pr-3">
+              <Link href={`/posts/update/${id}`}>
+                <button
+                  type="button"
+                  className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                >
+                  <PencilIcon
+                    className="-ml-1 mr-2 h-5 w-5 text-gray-500"
+                    aria-hidden="true"
+                  />
+                  Edit
+                </button>
+              </Link>
+            </span>
+            <span className="hidden sm:block">
               <button
                 type="button"
+                onClick={() => deletePostHandler()}
                 className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
-                <PencilIcon
+                <TrashIcon
                   className="-ml-1 mr-2 h-5 w-5 text-gray-500"
                   aria-hidden="true"
                 />
-                Edit
+                Delete
               </button>
-            </Link>
-          </span>
+            </span>
+          </>
         )}
 
         <span className="hidden sm:block ml-3">
