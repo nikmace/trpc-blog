@@ -17,7 +17,6 @@ export default function UpdatePage() {
     handleSubmit,
     register,
     formState: { errors, isSubmitting },
-    reset,
   } = useForm<UpdatePostInput>({ resolver: zodResolver(createPostSchema) });
 
   const { data, isLoading } = trpc.useQuery(["posts.single-post", { postId }]);
@@ -25,16 +24,15 @@ export default function UpdatePage() {
     onError(e) {
       toast.error(e.message);
     },
-    onSuccess(data) {
-      console.log(data);
-      // redirect to /posts/postId, refresh the page
+    onSuccess() {
+      toast.success(`Post was updated successfully!`);
+      router.push(`/posts/${postId}`);
     },
   });
 
   const onSubmit: SubmitHandler<UpdatePostInput> = async (values) => {
     await new Promise((resolve) => {
       setTimeout(() => {
-        console.log(values);
         mutate({ postId, ...values });
         resolve(undefined);
       }, 2000);
