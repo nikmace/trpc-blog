@@ -35,6 +35,8 @@ export const postRouter = createRouter()
   .mutation("delete-post", {
     input: deletePostSchema,
     async resolve({ ctx, input }) {
+      const { postId } = input;
+
       if (!ctx.user) {
         throw new TRPCError({
           code: "FORBIDDEN",
@@ -44,7 +46,7 @@ export const postRouter = createRouter()
 
       const post = await ctx.prisma.post.findUnique({
         where: {
-          id: input.postId,
+          id: postId,
         },
       });
 
@@ -55,11 +57,23 @@ export const postRouter = createRouter()
         });
       }
 
-      const deletedPost = await ctx.prisma.post.delete({
-        where: {
-          id: input.postId,
-        },
-      });
+      // Delete all Likes for that post before deleting the post itself
+
+      // Will fail if one the above operations fail
+      const [deletedLikes, deletedPost] = await ctx.prisma.$transaction([
+        ctx.prisma.like.deleteMany({
+          where: {
+            postId,
+          },
+        }),
+        ctx.prisma.post.delete({
+          where: {
+            id: postId,
+          },
+        }),
+      ]);
+
+      console.log(deletedLikes);
 
       return deletedPost;
     },
@@ -98,6 +112,9 @@ export const postRouter = createRouter()
       return await ctx.prisma.post.findUnique({
         where: {
           id: input.postId,
+        },
+        include: {
+          likes: true,
         },
       });
     },
