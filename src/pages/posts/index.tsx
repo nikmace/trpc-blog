@@ -14,7 +14,9 @@ const PostListingPage: React.FC = () => {
   return (
     <div className="my-16 mx-12">
       <div className="flex flex-row justify-between items-center w-[100%] pb-8">
-        <h3 className="text-3xl font-nunito font-light">Fresh posts</h3>
+        <h3 className="text-3xl font-nunito font-light dark:text-gray-500">
+          Fresh posts
+        </h3>
         <Link href="/posts/new">
           <button className="py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md border-indigo-600 text-indigo-600 hover:text-white hover:bg-indigo-600 focus:ring-indigo-500">
             Create new Post
