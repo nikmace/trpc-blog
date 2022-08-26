@@ -79,6 +79,7 @@ function SinglePostPage() {
         createdAt={data.createdAt}
         userId={data.userId}
         id={data.id}
+        userName={data.user.name}
       />
       <div className="whitespace-pre-wrap">{data.body}</div>
       <div className="flex justify-between">
