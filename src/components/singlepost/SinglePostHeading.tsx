@@ -24,10 +24,11 @@ function classNames(...classes: any[]) {
 }
 
 interface Props {
+  id: string;
   title: string;
   createdAt: Date;
   userId: string;
-  id: string;
+  userName: string;
 }
 
 export default function SinglePostHeading({
@@ -35,6 +36,7 @@ export default function SinglePostHeading({
   createdAt,
   userId,
   id,
+  userName,
 }: Props) {
   const router = useRouter();
   const authUser = useSelector(selectAuthUser);
@@ -101,7 +103,7 @@ export default function SinglePostHeading({
               className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
               aria-hidden="true"
             />
-            Story by Joe
+            Story by {userName}
           </div>
           <div className="mt-2 flex items-center text-sm text-gray-500">
             <BookmarkIcon
