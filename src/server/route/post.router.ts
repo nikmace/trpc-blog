@@ -115,6 +115,7 @@ export const postRouter = createRouter()
         },
         include: {
           likes: true,
+          user: true,
         },
       });
     },
