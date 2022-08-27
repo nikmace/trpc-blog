@@ -11,9 +11,16 @@ datasource db {
 }
 
 model User {
-  id    String @unique @default(uuid())
-  email String @unique
-  name  String
+  id           String   @unique @default(uuid())
+  email        String   @unique
+  name         String
+  phoneNumber  String?
+  birthday     String?
+  role         Role?    @default(USER)
+  organization String?
+  imageUrl     String?
+  active       Boolean? @default(true)
+  verified     Boolean? @default(false)
 
   createdAt  DateTime     @default(now())
   updatedAt  DateTime     @updatedAt
@@ -51,4 +58,9 @@ model Like {
   Post      Post?    @relation(fields: [postId], references: [id])
   postId    String?
   createdAt DateTime @default(now())
+}
+
+enum Role {
+  USER
+  ADMIN
 }
