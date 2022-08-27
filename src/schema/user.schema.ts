@@ -1,4 +1,4 @@
-import z from "zod";
+import z, { TypeOf } from "zod";
 
 export interface IUser {
   _id: string;
@@ -45,3 +45,31 @@ export type RequestOtpInput = z.TypeOf<typeof requestOtpSchema>;
 export const verifyOtpSchema = z.object({
   hash: z.string(),
 });
+
+export const meProfileSchema = z.object({
+  userId: z.string().uuid(),
+});
+
+export const updateUserSchema = z.object({
+  id: z.string().uuid().optional(),
+  name: z.string().min(2).max(32),
+  email: z.string().email().min(5),
+  phoneNumber: z.string().optional(),
+  birthday: z.string().optional(),
+  organization: z.string().optional(),
+  imageUrl: z.string().optional(),
+});
+
+export const updateUserSchemaRouter = z.object({
+  id: z.string().uuid(),
+  name: z.string(),
+  email: z.string(),
+  phoneNumber: z.string(),
+  birthday: z.string(),
+  organization: z.string(),
+  imageUrl: z.string(),
+  active: z.boolean().default(true),
+  verified: z.boolean().default(false),
+});
+
+export type UpdateUserInput = z.TypeOf<typeof updateUserSchemaRouter>;
