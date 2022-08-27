@@ -3,7 +3,10 @@ import { TRPCError } from "@trpc/server";
 
 import {
   createUserSchema,
+  meProfileSchema,
   requestOtpSchema,
+  updateUserSchema,
+  updateUserSchemaRouter,
   verifyOtpSchema,
 } from "../../schema/user.schema";
 import { sendLoginEmail } from "../../utils/mailer";
@@ -84,6 +87,43 @@ export const userRouter = createRouter()
       return true;
     },
   })
+  .mutation("update-user", {
+    input: updateUserSchemaRouter,
+    async resolve({ ctx, input }) {
+      const { id, email, name, phoneNumber, birthday, organization, imageUrl } =
+        input;
+
+      if (!ctx.user) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Cannot update user while logged out",
+        });
+      }
+
+      if (ctx.user.id !== input.id) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "You are not allowed to update this user",
+        });
+      }
+
+      const updatedUser = await ctx.prisma.user.update({
+        where: {
+          id,
+        },
+        data: {
+          email,
+          name,
+          phoneNumber,
+          birthday,
+          organization,
+          imageUrl,
+        },
+      });
+
+      return updatedUser;
+    },
+  })
   .query("verify-otp", {
     input: verifyOtpSchema,
     async resolve({ ctx, input }) {
@@ -132,7 +172,23 @@ export const userRouter = createRouter()
     },
   })
   .query("me", {
-    resolve({ ctx }) {
-      return ctx.user;
+    input: meProfileSchema,
+    async resolve({ ctx, input }) {
+      const { userId } = input;
+
+      const user = await ctx.prisma.user.findUnique({
+        where: {
+          id: userId,
+        },
+        include: {
+          Post: {
+            where: {
+              userId,
+            },
+          },
+        },
+      });
+
+      return user;
     },
   });
