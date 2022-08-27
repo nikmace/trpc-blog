@@ -7,15 +7,20 @@ import Image from "next/image";
 import Link from "next/link";
 
 import Logo from "../public/images/talkey3.png";
-import { selectAuthenticated } from "../redux/auth/selectors";
+import { selectAuthenticated, selectAuthUser } from "../redux/auth/selectors";
 import ProfileAvatar from "./profile/ProfileAvatar";
+import { trpc } from "../utils/trpc";
 
 function classNames(...classes: any[]) {
   return classes.filter(Boolean).join(" ");
 }
 
 export default function Navbar() {
+  const { id } = useSelector(selectAuthUser);
   const isAuthenticated = useSelector(selectAuthenticated);
+
+  const { data } = trpc.useQuery(["users.me", { userId: id }]);
+
   let navigation = useMemo(
     () => [
       { name: "Team", href: "#", current: false },
@@ -118,7 +123,10 @@ export default function Navbar() {
                   </div>
                 </div>
               </div>
-              <ProfileAvatar classNames={classNames} />
+              <ProfileAvatar
+                imageUrl={data?.imageUrl || ""}
+                classNames={classNames}
+              />
             </div>
           </div>
 
