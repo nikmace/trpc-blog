@@ -17,6 +17,8 @@ Project with configured **ESLint**, **Prettier**, **Stylelint**, **Editorconfig*
 
 Full CRUD functionality with ability to like/comment on post, user authentication.
 
+Project Status: **In Progress**
+
 # 🛠 Technologies:
 
 - **NextJS**
